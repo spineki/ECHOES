@@ -12,7 +12,7 @@
     {% for book in books%}
     <div class="author-container">
         <button onclick="location.href='/authors/{{author}}/{{book['book_folder']}}/{{book['book_name']}}';">
-            {{book['book_name']}}</button>
+            {{ unquote(book['book_name']) }}</button>
     </div>
     {% endfor %}
 </body>
