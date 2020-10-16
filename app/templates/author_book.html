@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Hello</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <h1> Livres de {{author}}</h1>
+    {% for book in books%}
+    <div class="author-container">
+        <button onclick="location.href='/authors/{{author}}/{{book['book_folder']}}/{{book['book_name']}}';">
+            {{book['book_name']}}</button>
+    </div>
+    {% endfor %}
+</body>
+
+</html>
