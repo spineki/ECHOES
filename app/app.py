@@ -1,12 +1,10 @@
 import os
 from flask import Flask, render_template, send_from_directory, request
 from flask.helpers import send_file
-from os import listdir
-from os.path import isfile, join
 from urllib.parse import unquote, quote
 
 app = Flask(__name__)
-app.config.from_pyfile('./config.cfg')
+app.config.from_pyfile('./config/config.cfg')
 
 
 def get_author_folders():
@@ -84,4 +82,4 @@ def about():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='192.168.1.41')
+    app.run(debug=True, host=app.config["IP_ADDRESS"])
