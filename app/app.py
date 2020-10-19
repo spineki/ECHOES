@@ -1,46 +1,75 @@
 import os
-from flask import Flask, render_template, send_from_directory, request
+from flask import Flask, render_template, send_from_directory, request, url_for
 from flask.helpers import send_file
 from urllib.parse import unquote, quote
+import sqlite3
+
 
 app = Flask(__name__)
 app.config.from_pyfile('./config/config.cfg')
 
+# VARIABLES -------------------------------------
+# Cached data
+AUTHORS = []
+BOOKS = []
+
+# Database
+conn = sqlite3.connect(os.path.join(
+    app.config['BOOK_LOCATION'], "metadata.db"))
+
+
+# page displaying
+NUMBER_ITEM_PER_PAGE = 5
+
+
+@app.context_processor
+def override_url_for():
+    return dict(url_for=dated_url_for)
+
+def dated_url_for(endpoint, **values):
+    if endpoint == 'static':
+        filename = values.get('filename', None)
+        if filename:
+            file_path = os.path.join(app.root_path,
+                                 endpoint, filename)
+            values['q'] = int(os.stat(file_path).st_mtime)
+    return url_for(endpoint, **values)
 
 def get_author_folders():
     return os.listdir(app.config['BOOK_LOCATION'])
 
+def get_author_names():
+    return AUTHORS
 
+# HOME PAGE
 @app.route('/')
 def index():
     return render_template("home.html")
 
-
-@app.route('/authors/search/', methods=['POST'])
-def search():
-    data = request.form
-
-    search = data["search"].lower()
-
-    folders = get_author_folders()
-
-    filtered_folders = []
-    for folder in folders:
-        if search in folder.lower():
-            filtered_folders.append(folder)
-
-    return render_template("author.html", authors=filtered_folders, unquote=unquote)
-
-
+# GETTING EVERY AUTHOR
 @app.route('/authors/')
 def authors():
     #onlyfiles = [f for f in listdir(app.config['BOOK_LOCATION']) if isfile(join(app.config['BOOK_LOCATION'], f))]
+    author_names = get_author_names()
+    return render_template("author.html", authors=author_names, unquote=unquote)
 
-    folders = get_author_folders()
+# GETTING AUTHOR FILTERED BY SEARCH
+@app.route('/authors/search/', methods=['POST'])
+def search():
+    data = request.form
+    search_keyword = data["search"].lower()
 
-    return render_template("author.html", authors=folders, unquote=unquote)
+    author_names = get_author_names()
+
+    filtered_author_names = []
+    for author_name in author_names:
+        if search_keyword in author_name.lower():
+            filtered_author_names.append(author_name)
+
+    return render_template("author.html", authors=filtered_author_names, unquote=unquote)
 
 
+# GETTING EVERY BOOK FROM ONE AUTHOR
 @app.route('/authors/<author_name>/')
 def author(author_name):
     #onlyfiles = [f for f in listdir(app.config['BOOK_LOCATION']) if isfile(join(app.config['BOOK_LOCATION'], f))]
@@ -52,7 +81,6 @@ def author(author_name):
 
     files = []
     for book_folder in books_folder:
-
         book_dir = os.path.join(author_folder_dir, book_folder)
         book_folder_content = os.listdir(book_dir)
 
@@ -63,7 +91,7 @@ def author(author_name):
 
     return render_template("author_book.html", author=author_name,  books=files, unquote=unquote)
 
-
+# GETTING A BOOK
 @app.route('/authors/<author_name>/<book_folder>/<book_name>')
 def book(author_name, book_folder, book_name):
     author_name = unquote(author_name)
@@ -76,10 +104,10 @@ def book(author_name, book_folder, book_name):
         return "error: " + str(e)
 
 
-@app.route("/about/")
-def about():
-    return "This site should allow you to download data from the rapsberry pi"
-
-
 if __name__ == "__main__":
+
+    # INIT CACE
+    AUTHORS = get_author_folders()
+
+
     app.run(debug=True, host=app.config["IP_ADDRESS"])

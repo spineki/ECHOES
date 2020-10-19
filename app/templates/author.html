@@ -8,19 +8,27 @@
 </head>
 
 <body>
-    <h1> Auteurs disponibles</h1>
+
+    <div class="outer">
+        <div class="inner"><button onclick="location.href='/authors/range/';">Back</button>
+        </div>
+        <h1 class="inner"> Auteurs disponibles</h1>
+        <div class="inner"><button onclick="location.href='/authors/range/';">Next</button></div>
+    </div>
 
     <form class="search-bar-container" method="POST" action="/authors/search/">
         <input class="search-bar" type="text" name="search" id="search">
         <input class="submit" type="submit" value="Rechercher">
     </form>
 
-    {% for author in authors%}
     <div class="author-container">
-        <button onclick="location.href='/authors/{{author}}/';"> {{unquote(author)}} </button>
+        {% for author in authors%}
+        <div class="author">
+            <button onclick="location.href='/authors/{{author}}/';"> {{unquote(author)}} </button>
+        </div>
+        {% endfor %}
     </div>
 
-    {% endfor %}
 </body>
 
 

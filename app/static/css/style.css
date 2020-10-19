@@ -12,13 +12,34 @@ body {
     font-family: Lato;
 }
 
+.outer
+{
+    width:100%;
+    margin:0px;
+    text-align: center;
+}
+.inner
+{
+    display: inline-block;
+}
+
+div.inner{
+    width:15%;
+}
+
+ div.inner > button{
+    width:100%;
+    height:100px;
+ }
+
+
 h1 {
-    width: 70%;
-    margin: auto;
+    width: 60%;
+    margin: 0px;
+    height: 100px;
     background-color: #fff;
     text-align: center;
-    padding-top: 50px;
-    padding-bottom: 50px;
+
 }
 
 .search-bar-container{
@@ -39,16 +60,22 @@ h1 {
     height:50px;
 }
 
+
 .author-container{
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
-    text-align: center;
+    flex-direction: column;
+    height: 100%;
+    margin: 0px;
     width: 100%;
-    height: 50px;
+}
+
+.author{
+    height: 100px;
+}
+
+.author > button {
+    width:100%;
+    height:100px;
 }
 
 .author-container > button {
