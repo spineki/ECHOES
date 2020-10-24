@@ -10,13 +10,17 @@
 body {
     background-color: #c7c7c7;
     font-family: Lato;
+    font-size: 20px;
+}
+
+button,  input{
+    font-size: 20px;
 }
 
 .outer
 {
     width:100%;
     margin:0px;
-    text-align: center;
 }
 .inner
 {
@@ -24,7 +28,7 @@ body {
 }
 
 div.inner{
-    width:15%;
+    width:10%;
 }
 
  div.inner > button{
@@ -33,12 +37,10 @@ div.inner{
  }
 
 
-h1 {
+span {
     width: 60%;
     margin: 0px;
-    height: 100px;
     background-color: #fff;
-    text-align: center;
 
 }
 
@@ -56,7 +58,6 @@ h1 {
 }
 
 .submit{
-    width:100px;
     height:50px;
 }
 
