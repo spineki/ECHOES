@@ -25,15 +25,16 @@ def get_download_page_links(keyword: str) -> Tuple[List[Dict[str, str]], int]:
 
     soup = bs4.BeautifulSoup(r.content, features="html.parser")
 
-    rows = soup.select("table > tbody td > img")
+    # rows = soup.select("table > tbody td > img")
 
     if r.status_code == 200:
         results = soup.select("a")
 
         filtered_results = []
         for result in results:
+            content = ""
             try:
-                content = ""
+
                 if result['href'][:len("javascript")] == "javascript":
 
                     url = result['href']
@@ -116,6 +117,8 @@ def download_file(title: str, directory: str, output_dir: str) -> str:
         return None
 
     output_file = os.path.join(output_dir, title)
+
+    print(">> saving to ", output_file)
 
     with open(output_file, "wb+") as f:
         f.write(r.content)

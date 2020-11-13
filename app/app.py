@@ -5,20 +5,14 @@ from flask.helpers import send_file
 from urllib.parse import unquote, quote
 import sqlite3
 
+from scripts.fourtoutici import get_download_page_links, download_file
 
 app = Flask(__name__)
 app.config.from_pyfile('./config/config.cfg')
 
-# VARIABLES -------------------------------------
-# Cached data
-AUTHORS = []
-BOOKS = []
-
-# page displaying
-NUMBER_ITEM_PER_PAGE = 5
-
-
 # Flask helpers
+
+
 @app.context_processor
 def override_url_for():
     return dict(url_for=dated_url_for)
@@ -175,8 +169,9 @@ def search_book():
     results = [
         {
             "title": book["book_name"] + " : " + book["book_author"],
-            "link":  "/authors/{0}/{1}/{2}".format(book['book_author'], book['book_folder'], book['book_name'])
+            "link":  "/download/?author_name={0}&book_folder={1}&book_name={2}".format(book['book_author'], book['book_folder'], book['book_name'])
         }
+
         for book in books]
 
     return render_template("results.html", results=results, unquote=unquote, len=len)
@@ -212,27 +207,51 @@ def search_fourtoutici():
     data = request.args
     search_keyword: str = data["keyword"].lower().strip()
 
-    authors = fetch_author_by_name(search_keyword)
+    searches, error_code = get_download_page_links(search_keyword)
 
     results = [
         {
-            "title": author["author_name"],
-            "link":  "/authors/{0}/{0}/{0}".format(author['author_name'])
+            "title": search["title"],
+            "link":  "/download-fourtoutici/?title={0}&directory={1}".format(quote(search["title"]), quote(search["directory"]))
         }
-        for author in authors]
+        for search in searches]
 
     return render_template("results.html", results=results, unquote=unquote, len=len)
 
-# ---------------------------------------------------------------------------------
 
-# GETTING AUTHOR FILTERED BY SEARCH
+@app.route('/download-fourtoutici/', methods={"GET"})
+def download_fourtoutici():
+
+    data = request.args
+
+    title = data["title"]
+    directory = data["directory"]
+
+    output_dir = os.path.join(app.root_path, 'downloads')
+
+    final_path = download_file(
+        title=title, directory=directory, output_dir=output_dir)
+
+    print(final_path)
+    return send_file(filename_or_fp=final_path,  as_attachment=True)
+
+    # ---------------------------------------------------------------------------------
+
+    # GETTING AUTHOR FILTERED BY SEARCH
 
 
-@app.route('/reload/', methods=['POST'])
-def reload():
-    global AUTHORS
-    AUTHORS = get_author_folders()
-    return redirect('/authors/page/0', code=302)
+@app.route('/download/')
+def download():
+    data = request.args
+
+    author_name = unquote(data["author_name"])
+    book_folder = unquote(data["book_folder"])
+    book_name = unquote(data["book_name"])
+
+    try:
+        return send_from_directory(directory=os.path.join(app.config['BOOK_LOCATION'], author_name, book_folder), filename=book_name,  as_attachment=True)
+    except Exception as e:
+        return "error: " + str(e)
 
 
 if __name__ == "__main__":
