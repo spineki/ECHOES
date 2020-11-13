@@ -1,3 +1,4 @@
+import os
 from typing import Dict, List, Tuple
 import requests
 import bs4
@@ -61,9 +62,12 @@ def get_download_page_links(keyword: str) -> Tuple[List[Dict[str, str]], int]:
         return ([], r.status_code)
 
 
-def download_file(title, directory):
+def download_file(title: str, directory: str, output_dir: str) -> str:
     """
     Download a file from the website solving the little number puzzle
+
+    return downloaded file path 
+    None if errror
     """
 
     download_link = "http://www.fourtoutici.top/upload.php?action=downloadfile&filename={0}&directory={1}&".format(
@@ -72,8 +76,8 @@ def download_file(title, directory):
     r = requests.get(download_link)
 
     if r.status_code != 200:
-        print("impossible to reach")
-        return r.status_code
+        print("impossible to reach: error cde", r.status_code)
+        return None
 
     soup = bs4.BeautifulSoup(r.content, features="html.parser")
 
@@ -82,7 +86,7 @@ def download_file(title, directory):
         images = soup.select("img")
     except:
         print("impossible to get img tag in download page")
-        return -1
+        return None
 
     for image in images:
         try:
@@ -109,18 +113,26 @@ def download_file(title, directory):
 
     if r.status_code != 200:
         print("impossible to reach file ", r.status_code)
-        return r.status_code
+        return None
 
-    with open(title, "wb+") as f:
+    output_file = os.path.join(output_dir, title)
+
+    with open(output_file, "wb+") as f:
         f.write(r.content)
 
+    return output_file
+
+
+"""
+
+exemple d'utilisation
 
 filtered_results, error_code = get_download_page_links("les sables")
 
 chosen_result = filtered_results[0]
 
 download_file(chosen_result['title'], chosen_result['directory'])
-
+"""
 
 """
 
@@ -132,6 +144,4 @@ on en déduit que
 les chiffres au centre de l'image sont les chiffre de fin du code
 dernier chiffre de l'image = code[-3]
 
-
-valcodeup
 """
