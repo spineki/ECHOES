@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Hello</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <h1> Résultats: {{len(results)}}</h1>
+    {% for result in results%}
+    <div>
+        <button class="full-width" onclick="location.href='{{result['link']}}';">
+            {{ unquote(result['title']) }}</button>
+    </div>
+    {% endfor %}
+</body>
+
+</html>

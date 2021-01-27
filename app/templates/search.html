@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Hello</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}?rnd="
+        {{range(1, 51)}}>
+</head>
+
+<body>
+    <h1> Recherche </h1>
+
+
+    <form class="row-container full-width separated" method="GET" action="/search/book/">
+        <label for="keyword">
+            Livre: &nbsp;
+        </label>
+        <input class="search-bar row-item" type="text" name="keyword" placeholder="taper le nom du livre">
+        <input class="submit" type="submit" value="Rechercher">
+    </form>
+
+
+
+    <form class="row-container full-width separated" method="GET" action="/search/author/">
+        <label for="keyword">
+            Auteur: &nbsp;
+        </label>
+        <input class="search-bar row-item" type="text" name="keyword" placeholder="taper le nom de l'auteur">
+        <input class="submit" type="submit" value="Rechercher">
+    </form>
+
+    <form class="row-container full-width separated" method="GET" action="/search/fourtoutici/">
+        <label for="keyword">
+            Fourtoutici: &nbsp;
+        </label>
+        <input class="search-bar row-item" type="text" name="keyword" placeholder="rechercher sur fourtoutici">
+        <input class="submit" type="submit" value="Rechercher">
+    </form>
+
+</body>
+
+</html>

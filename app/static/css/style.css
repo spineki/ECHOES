@@ -7,6 +7,7 @@
 
 @import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
 
+
 body {
     background-color: #c7c7c7;
     font-family: Lato;
@@ -17,6 +18,38 @@ button,  input{
     font-size: 20px;
 }
 
+.row-container
+{
+    display: inline-block;
+}
+
+.row-container > .submit {
+    position: absolute;
+    right: 0px;
+}
+
+.row-container > .search-bar{
+    min-width: 50%;
+}
+
+.full-width
+{
+    width: 100%;
+}
+
+.separated
+{
+    margin-bottom: 20px;
+}
+
+
+.row-item
+{
+    flex:1;
+}
+
+
+/*
 .outer
 {
     width:100%;
@@ -89,3 +122,4 @@ span {
         -ms-flex-pack: center;
             justify-content: center;
 }
+*/
